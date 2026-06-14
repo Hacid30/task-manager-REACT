@@ -1,0 +1,233 @@
+import { useState, useEffect, useRef } from "react";
+import TaskForm from "./components/TaskForm";
+import TaskList from "./components/TaskList";
+import DarkModeBtn from "./components/DarkModeBtn";
+import Manners from "./components/Manners";
+import Summary from "./components/Summary";
+import Browse from "./components/Browse";
+import "./App.css";
+
+function App() {
+  // -- states --
+  const [ tasks, setTasks ] = useState(() => {
+    const savedTasks = localStorage.getItem('my_tasks');
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  }); 
+  
+  const [ filter, setFilter ] = useState('all');
+  const [ searchQuery, setSearchQuery ] = useState('');
+  const [ isDarkMode, setIsDarkMode ] = useState(false);
+  const [ taskToEdit, setTaskToEdit ] = useState(null);
+  const [ isModalOpen, setIsModalOpen ] = useState(false);
+  const [ tick, setTick ] = useState(0);
+  const [ dateSort, setDateSort ] = useState('');
+  const [ priorityFilter, setPriorityFilter ] = useState('');
+  const [ modalType, setModalType ] = useState('');
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
+
+  const formRef = useRef(null);
+
+  //Use localstorage to save tasks in the browser
+  useEffect(() =>{
+    localStorage.setItem('my_tasks', JSON.stringify(tasks));
+  },[tasks]);
+
+  useEffect( () => {
+    const interval = setInterval( () => {
+      setTick(prev => prev +1);
+  }, 60000);
+
+  return () => clearInterval(interval);
+  }, []);
+
+  //Filter
+  const getFilteredTasks = () => {
+    let filtered = [...tasks];
+    
+    if(filter === 'pending'){
+      filtered = filtered.filter(task => !task.completed);
+    } else if(filter === 'completed'){
+      filtered = filtered.filter(task => task.completed);
+    }
+
+    if(searchQuery.trim() !== ''){
+      filtered = filtered.filter(task => 
+        task.text.toLowerCase().includes(searchQuery.toLocaleLowerCase()));
+    }
+
+    if(dateSort === 'recent'){
+      filtered = filtered.toSorted((a,b) => b.date - a.date);
+    }else if(dateSort === 'oldest'){
+      filtered = filtered.toSorted((a,b) => a.date - b.date);
+    }
+
+    if(priorityFilter !== ''){
+      filtered =  filtered.filter(task => task.priority === priorityFilter)
+    }
+
+    return filtered;
+  }
+
+  const tasksToRender = getFilteredTasks().sort((a,b) => a.completed - b.completed);
+
+  const togglesDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  }
+
+  const updateTask = (id, newText, newPriority) => {
+    const updatedTasks = tasks.map((task) => 
+      task.id === id ? {...task, text: newText, priority: newPriority } : task
+    );
+
+    setTasks(updatedTasks);
+  }
+
+  useEffect(() => {
+    if(isDarkMode){
+      document.body.classList.add("dark");
+    }else{
+      document.body.classList.remove("dark");
+    }
+  }, [isDarkMode]);
+
+  //Effect to automatically activate dark mode between 8:00 pm and 6:00 am
+  useEffect(() =>{
+    const currentHour = new Date().getHours();
+    if(currentHour>=20 || currentHour<=6){
+      setIsDarkMode(true);
+    }
+  },[]);
+
+  //Add tasks
+  const addTask = (text, priority) => {
+    if(text.trim() === '') return;
+    
+    const newTask = {
+      id : Date.now(),
+      text : text,
+      priority: priority,
+      date : Date.now(),
+      completed: false
+    };
+    setTasks([...tasks, newTask]);
+
+    setIsModalOpen(true);
+    setModalType('success');
+  };
+
+  const deleteTask = (id) => {
+    setTasks(prevTask =>
+      prevTask.map(task =>
+        task.id === id ? {...task, isDeleting: true } : task
+      )
+    );
+
+    setTimeout(() =>{
+      setTasks(prevTask => prevTask.filter( (task) => task.id !== id ));
+    }, 4000);
+  };
+
+  const toggleTask = (id) => {
+    const updateTasks = tasks.map( (task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    );
+
+    setTasks(updateTasks);
+  };
+
+  const reorderTasks = (draggedId, targetId) => {
+    const draggedIndex = tasks.findIndex(task => task.id === draggedId);
+    const targetIndex = tasks.findIndex(task => task.id === targetId);
+
+    if(draggedIndex === -1 || targetIndex === -1) return;
+
+    const newTasks = [...tasks];
+    const [draggedTask] = newTasks.splice(draggedIndex, 1);
+    newTasks.splice(targetIndex, 0, draggedTask);
+
+    setTasks(newTasks);
+  };
+
+  // boton de scroll
+  const scrollToForm = () => {
+    if(formRef.current) {
+      formRef.current.scrollIntoView( { behavior: 'smooth'} );
+    }
+  }
+
+  const deleteTasks = () => {
+    setTimeout( () => {
+      setTasks([]);
+      setIsDeletingAll(false)
+    }, 400 )
+  }
+
+  return (
+    <div>
+      <h1>ADMINISTRADOR DE TAREAS</h1>
+
+      <DarkModeBtn   
+        OnTogglesDark={togglesDarkMode}
+        isDarkMode={isDarkMode}
+      />
+      <div ref={formRef}>
+      <TaskForm onAddTask={addTask} />
+      </div>
+
+      <Browse
+        tasks={tasks.length} 
+        onDeleteTasks={deleteTasks}
+        onChangeFilter={setFilter}
+        currentFilter={filter}
+        OnSearch={setSearchQuery}
+        dateSort={setDateSort}
+        priorityFilter={setPriorityFilter}
+        setIsModalOpen={setIsModalOpen}
+        modalType={setModalType}
+        isDeletingAll={setIsDeletingAll}
+      />
+
+      <TaskList 
+        tasks={tasksToRender} 
+        allTasksCount={tasks}
+        filter={filter}
+        onDeleteTask={deleteTask} 
+        onToggleTask={toggleTask} 
+        onOpenEdit={(task) => { setTaskToEdit(task); 
+          setIsModalOpen(true);
+          setModalType('editing');
+        }} 
+        setIsModalOpen={setIsModalOpen}
+        onChangeFilter={setFilter}
+        onReorderTasks={reorderTasks}
+        modalType={setModalType}
+        isDeletingAll={isDeletingAll}
+        tick={tick}
+      />
+
+      {isModalOpen && (
+        <div className={`modal active`}> 
+          <div className="modal-content">
+          <Manners
+            onUpdateTask={updateTask}
+            task={taskToEdit}
+            onClose={() => {setIsModalOpen(false);
+              setModalType('');
+            }}
+            sendModalType={setModalType}
+            modalType={modalType}
+          />
+          </div>
+        </div>
+      )}
+
+      <Summary
+        tasks={tasksToRender}
+        onTasksGlobal={tasks}
+        onScroll={scrollToForm}
+      />
+    </div>
+  )
+}
+
+export default App;
