@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
 
 function TaskItem({ 
     task, 
@@ -24,27 +26,24 @@ function TaskItem({
 
     // == Time calculation logic ==
     let timeAgo = 'Hace un momento';
-    const formatDistanceToNow = window.dateFns?.formatDistanceToNow;
     
     //If the task was created less than 5 seconds ago, it is considered "new"
     const now = Date.now();
     const dateCreation = task.date ? new Date(task.date).getTime() : task.id;
     let isNew = (now - dateCreation) < 3000;
 
-    if(window.dateFns && formatDistanceToNow) {
     try {
         const dateToParse = task.date ? new Date(task.date) : new Date(task.id);
+        
         if(!isNaN(dateToParse.getTime())){
-            const spanishLocale = window.dateFns.locale?.es;;
-            timeAgo = window.dateFns.formatDistanceToNow(dateToParse, {
+            timeAgo = formatDistanceToNow(dateToParse, {
                 addSuffix: true,
-                locale: spanishLocale
+                locale: es
             })
             }
         } catch (error) {
             console.error("Error al formatear fecha:", error);
         }
-    }
 
     return (
         <li key={task.id} 

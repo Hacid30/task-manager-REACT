@@ -1,8 +1,6 @@
 # Task Manager
 
-Aplicación web sencilla para registrar, visualizar y administrar tareas personales mediante estados, con persistencia de datos usando LocalStorage.
-
-Este proyecto fue desarrollado como práctica de REACT, lógica de negocio y buenas prácticas de organización del código.
+Simple web application to record, view and manage personal tasks through states, with data persistence using LocalStorage.  This project was developed as a REACT practice, business logic and good code organization practices.
 
 ## Features
 
