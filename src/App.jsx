@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import DarkModeBtn from "./components/DarkModeBtn";
-import Manners from "./components/Manners";
+import TaskModal from "./components/TaskModal";
 import Summary from "./components/Summary";
 import Browse from "./components/Browse";
 import "./App.css";
@@ -197,7 +197,7 @@ function App() {
       {isModalOpen && (
         <div className={`modal active`}> 
           <div className="modal-content">
-          <Manners
+          <TaskModal
             onUpdateTask={updateTask}
             task={taskToEdit}
             onClose={() => {setIsModalOpen(false);

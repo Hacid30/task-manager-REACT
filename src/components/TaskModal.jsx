@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "../App.css"
 import checkImg from '../assets/img/marca-verifica.avif'
 
-function Manners({task, onUpdateTask, onClose, modalType, sendModalType}){
+function TaskModal({task, onUpdateTask, onClose, modalType, sendModalType}){
     const [editText, setEditText] = useState(task ? task.text : '');
     const [priority, setPriority] = useState(task ? task.priority : 'media');
 
@@ -91,4 +91,4 @@ function Manners({task, onUpdateTask, onClose, modalType, sendModalType}){
     return null;
 }
 
-export default Manners;
+export default TaskModal;
