@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import DarkModeBtn from "./components/DarkModeBtn";
@@ -19,7 +19,6 @@ function App() {
   const [ isDarkMode, setIsDarkMode ] = useState(false);
   const [ taskToEdit, setTaskToEdit ] = useState(null);
   const [ isModalOpen, setIsModalOpen ] = useState(false);
-  const [ tick, setTick ] = useState(0);
   const [ dateSort, setDateSort ] = useState('');
   const [ priorityFilter, setPriorityFilter ] = useState('');
   const [ modalType, setModalType ] = useState('');
@@ -32,16 +31,9 @@ function App() {
     localStorage.setItem('my_tasks', JSON.stringify(tasks));
   },[tasks]);
 
-  useEffect( () => {
-    const interval = setInterval( () => {
-      setTick(prev => prev +1);
-  }, 60000);
-
-  return () => clearInterval(interval);
-  }, []);
-
   //Filter
-  const getFilteredTasks = () => {
+
+  const tasksToRender = useMemo(() => {
     let filtered = [...tasks];
     
     if(filter === 'pending'){
@@ -66,9 +58,7 @@ function App() {
     }
 
     return filtered;
-  }
-
-  const tasksToRender = getFilteredTasks().sort((a,b) => a.completed - b.completed);
+  }, [tasks, filter, searchQuery, priorityFilter, dateSort]);
 
   const togglesDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -124,7 +114,7 @@ function App() {
 
     setTimeout(() =>{
       setTasks(prevTask => prevTask.filter( (task) => task.id !== id ));
-    }, 4000);
+    }, 400);
   };
 
   const toggleTask = (id) => {
@@ -202,7 +192,6 @@ function App() {
         onReorderTasks={reorderTasks}
         modalType={setModalType}
         isDeletingAll={isDeletingAll}
-        tick={tick}
       />
 
       {isModalOpen && (

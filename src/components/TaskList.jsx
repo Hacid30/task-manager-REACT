@@ -1,4 +1,89 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+function TaskItem({ 
+    task, 
+    onDeleteTask, 
+    onToggleTask, 
+    onOpenEdit, 
+    handleDragStart, 
+    handleDragOver, 
+    handleDrop, 
+    isDeletingAll, 
+    modalType, 
+    setIsModalOpen 
+}){
+    const [minuteTick, setMinuteTick] = useState(0);
+
+    useEffect( () => {
+        const interval = setInterval( () => {
+        setMinuteTick(prev => prev +1);
+    }, 60000);
+    
+    return () => clearInterval(interval);
+    }, []);
+
+    // == Time calculation logic ==
+    let timeAgo = 'Hace un momento';
+    const formatDistanceToNow = window.dateFns?.formatDistanceToNow;
+    
+    //If the task was created less than 5 seconds ago, it is considered "new"
+    const now = Date.now();
+    const dateCreation = task.date ? new Date(task.date).getTime() : task.id;
+    let isNew = (now - dateCreation) < 3000;
+
+    if(window.dateFns && formatDistanceToNow) {
+    try {
+        const dateToParse = task.date ? new Date(task.date) : new Date(task.id);
+        if(!isNaN(dateToParse.getTime())){
+            const spanishLocale = window.dateFns.locale?.es;;
+            timeAgo = window.dateFns.formatDistanceToNow(dateToParse, {
+                addSuffix: true,
+                locale: spanishLocale
+            })
+            }
+        } catch (error) {
+            console.error("Error al formatear fecha:", error);
+        }
+    }
+
+    return (
+        <li key={task.id} 
+            className={`${task.priority} 
+                ${isNew ? 'new' : ''}
+                ${task.isDeleting ? 'eliminating' : ''}`}
+                draggable={true}
+                onDragStart={(e) => handleDragStart(e, task.id)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, task.id)}
+                style={{ cursor: 'move' }}
+        > 
+            <span className={task.completed ? 'made' : 'none'}>
+                {`${task.text} | ${timeAgo} | ${task.priority}`}
+            </span>
+
+            <div className="listButtons">
+                <button 
+                    className={`${task.completed ? 'accomplished-btn' : 'none'} carriedOut`}
+                    onClick={() => onToggleTask(task.id)} 
+                > &#10004; </button>
+
+                <button 
+                    onClick={() => onOpenEdit(task)}
+                    className="edit"
+                > Editar </button>
+
+                <button 
+                    onClick={() => {onDeleteTask(task.id);
+                        modalType('eliminated');
+                        setIsModalOpen(true)
+                    }}
+                    className="eliminate" 
+                > Eliminar </button> 
+            </div>
+        </li>
+    );
+}
+
 
 function TaskList({
     tasks, 
@@ -11,7 +96,6 @@ function TaskList({
     setIsModalOpen,
     isDeletingAll,
     filter,
-    tick
     }){
 
     if(allTasksCount.length === 0){
@@ -29,7 +113,7 @@ function TaskList({
         return <p className="no-tasks-message">No se encontraron tareas que coincidan con la búsqueda.</p>
     }
 
-    const handleDragStar = (e, id) => {
+    const handleDragStart = (e, id) => {
         e.dataTransfer.setData('text/plain', id);
     };
 
@@ -45,75 +129,27 @@ function TaskList({
         }
     };
 
-    const formatDistanceToNow = window.dateFns?.formatDistanceToNow;
-
     return(
         <div>
             <ul className={`${isDeletingAll ? 'eliminating' : ''} list`}>                
-                {tasks.map((task) => {
-                    let timeAgo = 'Hace un momento';
-
-                    //If the task was created less than 5 seconds ago, it is considered "new"
-                    const now = Date.now();
-                    const dateCreation = task.date ? new Date(task.date).getTime() : task.id;
-                    let isNew = (now - dateCreation) < 3000;
-
-                    if(window.dateFns && formatDistanceToNow) {
-                        try {
-                            const dateToParse = task.date ? new Date(task.date) : new Date(task.id);
-
-                            if(!isNaN(dateToParse.getTime())){
-                                const spanishLocale = window.dateFns.locale?.es;;
-
-                                timeAgo = window.dateFns.formatDistanceToNow(dateToParse, {
-                                    addSuffix: true,
-                                    locale: spanishLocale
-                                })
-                            }
-                        } catch (error) {
-                            console.error("Error al formatear fecha:", error);
-                        }
-                    }
-
-                    return (
-                        <li key={task.id} 
-                            className={`${task.priority} 
-                                ${isNew ? 'new' : ''}
-                                ${task.isDeleting ? 'eliminating' : ''}`}
-                            draggable={true}
-                            onDragStart={(e) => handleDragStar(e, task.id)}
-                            onDragOver={handleDragOver}
-                            onDrop={(e) => handleDrop(e, task.id)}
-                            style={{ cursor: 'move' }}
-                        > 
-                            <span className={task.completed ? 'made' : 'none'}>
-                                {`${task.text} | ${timeAgo} | ${task.priority}`}
-                            </span>
-
-                            <div className="listButtons">
-                            <button 
-                                className={`${task.completed ? 'accomplished-btn' : 'none'} carriedOut`}
-                                onClick={() => onToggleTask(task.id)} 
-                            > &#10004; </button>
-
-                            <button 
-                                onClick={() => onOpenEdit(task)}
-                                className="edit"
-                            > Editar </button>
-
-                            <button 
-                                onClick={() => {onDeleteTask(task.id);
-                                    modalType('eliminated');
-                                    setIsModalOpen(true)
-                                }}
-                                className="eliminate" 
-                            > Eliminar </button> 
-                            </div>
-                        </li>
-                    )})}
+                {tasks.map((task) => (
+                    <TaskItem
+                    key={task.id}
+                    task={task}
+                    onDeleteTask={onDeleteTask}
+                    onToggleTask={onToggleTask}
+                    onOpenEdit={onOpenEdit}
+                    handleDragStart={handleDragStart}
+                    handleDragOver={handleDragOver}
+                    handleDrop={handleDrop}
+                    isDeletingAll={isDeletingAll}
+                    modalType={modalType}
+                    setIsModalOpen={setIsModalOpen}
+                    />
+                ))}
             </ul>
         </div>
-    )
+    );
 }
 
 export default TaskList;
