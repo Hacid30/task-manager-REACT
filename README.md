@@ -1,33 +1,29 @@
-# Task Manager
+# React Task Manager
 
-Simple web application to record, view and manage personal tasks through states, with data persistence using LocalStorage.  This project was developed as a REACT practice, business logic and good code organization practices.
+A high-performance React Task Manager featuring persistent storage, advanced filtering, and a polished user interface. Built with a focus on component architecture, this project includes features like cascaded filtering, native drag-and-drop, date management with date-fns, and custom CSS animations for task lifecycle events.
+
+This project was developed to practice React fundamentals, business logic, and clean code organization.
 
 ## Features
 
-- When there are no tasks, it is displayed in the list with the text "There are no registered tasks".
-- Add tasks.
-- Prevent tasks from going blank.
-- View added tasks.
-- Add date on which the task was added dynamically using date-fns library.
-- Give approval of task completed.
-- Organizing tasks using filter lists such as "All, Pending and Done".
-- Organize tasks by date (Newest first, Oldest first).
-- Add a priority to each task (High, Medium, Low).
-- Organize tasks by priority.
-- Colorimetry to tasks according to their priority.
-- Delete task.
-- Delete all tasks.
-- Animation when the task is deleted.
-- Confirmation to know if you want to delete the task.
-- Summary of task statuses.
-- Edit task.
-- Search bar by title or description of the task.
-- Filter for the summary, every time this is changed (All, Pending or Done), the summary is modified.
-- Dark mode.
-- Drag tasks to change their position.
-- Modals to see if the task performed the action correctly (add, edit, delete or delete all).
-- Home button to return to the form, when the list is very long.
-- Close manners by clicking outside of it.
+- Smart Empty States: Displays a message ("No registered tasks") when the list or filter result is empty.
+- Task Management: Add new tasks and edit existing ones easily.
+- Form Validation: Prevents users from submitting empty or blank tasks.
+- Relative Time Tracking: Dynamic task creation dates showing relative time (e.g., "5 minutes ago") using the date-fns library.
+- Task Completion: Mark tasks as completed  with visual feedback.
+- Advanced Cascaded Filtering: Organize tasks using tab filters (All, Pending, Completed) combined with live search.
+- Sorting Options: Sort tasks by entry date (Newest first, Oldest first).
+- Priority Levels: Set specific priorities (High, Medium, Low) and filter the list by them.
+- Color Coding: Visual color coding based on task priority.
+- Deletion Controls: Delete individual tasks or clear all tasks at once.
+- Fluid Animations: Custom CSS animations for task creation and smooth transition effects when deleting.
+- Real-Time Summary: A dynamic status bar that updates total, pending, and completed tasks based on the active filter.
+- Live Search Bar: Instantly find tasks by typing their title or description.
+- Dark Mode: Toggleable dark/light theme for better user experience.
+- Drag and Drop: Native functionality to intuitively reorder tasks by dragging them.
+- Smart Modal Management: Modals with conditional rendering to confirm actions (add, edit, delete).
+- Scroll-to-Top: A home button to quickly return to the input form when the list grows too long.
+- Intuitive UI/UX: Close modals by clicking outside of them.
 
 ## Technologies used
 
@@ -54,25 +50,25 @@ Simple web application to record, view and manage personal tasks through states,
 
 ## Applied concepts
 
-- Hooks.
-- Props.
-- Components.
-- Data persistence in the browser.
+- React Hooks (useState, useEffect, useRef, useMemo).
+- Prop drilling and component communication.
+- Conditional rendering.
+- Data persistence using the browser's localStorage.
 
 ## How to use the app
 
-1. Write the title of the task.
-2. Choose the priority of the task.
-3. Click **"Add Task"**.
-4. Use buttons to classify the filter list, between "All", "Pending" and "Done".
-5. Use the edit button to modify a task.
-6. Use the Delete button to delete an individual task or all at once.
-7. Use the Done button to cross out the individual task that is already done.
-8. The data is automatically saved in the browser.
-9. Type in the search bar by the title of the task to find it.
-10. Use the "Oldest" or "Newest" date selector to organize by entry date.
-11. Use the priority selector to only show tasks with the chosen priority.
-12. Use the home button to return to the form.
+1. Enter the title of your task in the input field.
+2. Select the task's priority level (High, Medium, Low).
+3. Click "Agregar" (Add Task).
+4. Use the filter buttons to toggle between "All", "Pending", and "Completed" tasks.
+5. Click the edit button to modify a task's title or priority.
+6. Use the delete button to remove an individual task, or "Eliminar todo" to clear the list.
+7. Click the checkmark button (✔) to mark a task as completed.
+8. Data is automatically saved in your browser; it won't be lost upon refreshing.
+9. Type in the search bar to find a specific task in real-time.
+10. Use the "Date" or "Priority" dropdowns to sort and filter your view.
+11. Drag any task and drop it in a new position to reorder your list.
+12. Use the "Inicio" (Home) button in the summary to jump back to the form.
 
 ## Author
 **Héctor Hacid Julio Meza**  

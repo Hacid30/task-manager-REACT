@@ -94,7 +94,7 @@ function TaskList({
     modalType,
     setIsModalOpen,
     isDeletingAll,
-    filter,
+    filters
     }){
 
     if(allTasksCount.length === 0){
@@ -102,10 +102,10 @@ function TaskList({
     }
 
     if(tasks.length === 0){
-        if(filter === 'pending'){
+        if(filters.status === 'pending'){
             return <p className="no-tasks-message">No tienes tareas pendientes.</p>
         }
-        if(filter === 'completed'){
+        if(filters.status === 'completed'){
             return <p className="no-tasks-message">No tienes tareas realizadas.</p>
         }
 

@@ -14,13 +14,23 @@ function App() {
     return savedTasks ? JSON.parse(savedTasks) : [];
   }); 
   
-  const [ filter, setFilter ] = useState('all');
-  const [ searchQuery, setSearchQuery ] = useState('');
+  const [ filters, setFilters ] = useState({
+    status: 'all',
+    search: '',
+    dateSort: '',
+    priority: ''
+  });
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  }
+
   const [ isDarkMode, setIsDarkMode ] = useState(false);
   const [ taskToEdit, setTaskToEdit ] = useState(null);
   const [ isModalOpen, setIsModalOpen ] = useState(false);
-  const [ dateSort, setDateSort ] = useState('');
-  const [ priorityFilter, setPriorityFilter ] = useState('');
   const [ modalType, setModalType ] = useState('');
   const [isDeletingAll, setIsDeletingAll] = useState(false);
 
@@ -36,29 +46,29 @@ function App() {
   const tasksToRender = useMemo(() => {
     let filtered = [...tasks];
     
-    if(filter === 'pending'){
+    if(filters.status === 'pending'){
       filtered = filtered.filter(task => !task.completed);
-    } else if(filter === 'completed'){
+    } else if(filters.status  === 'completed'){
       filtered = filtered.filter(task => task.completed);
     }
 
-    if(searchQuery.trim() !== ''){
+    if(filters.search.trim() !== ''){
       filtered = filtered.filter(task => 
-        task.text.toLowerCase().includes(searchQuery.toLocaleLowerCase()));
+        task.text.toLowerCase().includes(filters.search.toLocaleLowerCase()));
     }
 
-    if(dateSort === 'recent'){
+    if(filters.dateSort === 'recent'){
       filtered = filtered.toSorted((a,b) => b.date - a.date);
-    }else if(dateSort === 'oldest'){
+    }else if(filters.dateSort === 'oldest'){
       filtered = filtered.toSorted((a,b) => a.date - b.date);
     }
 
-    if(priorityFilter !== ''){
-      filtered =  filtered.filter(task => task.priority === priorityFilter)
+    if(filters.priority !== ''){
+      filtered =  filtered.filter(task => task.priority === filters.priority)
     }
 
     return filtered;
-  }, [tasks, filter, searchQuery, priorityFilter, dateSort]);
+  }, [tasks, filters]);
 
   const togglesDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -167,11 +177,8 @@ function App() {
       <Browse
         tasks={tasks.length} 
         onDeleteTasks={deleteTasks}
-        onChangeFilter={setFilter}
-        currentFilter={filter}
-        OnSearch={setSearchQuery}
-        dateSort={setDateSort}
-        priorityFilter={setPriorityFilter}
+        filters={filters}
+        onFilterChange={handleFilterChange}
         setIsModalOpen={setIsModalOpen}
         modalType={setModalType}
         isDeletingAll={setIsDeletingAll}
@@ -180,7 +187,7 @@ function App() {
       <TaskList 
         tasks={tasksToRender} 
         allTasksCount={tasks}
-        filter={filter}
+        filters={filters}
         onDeleteTask={deleteTask} 
         onToggleTask={toggleTask} 
         onOpenEdit={(task) => { setTaskToEdit(task); 
@@ -188,7 +195,6 @@ function App() {
           setModalType('editing');
         }} 
         setIsModalOpen={setIsModalOpen}
-        onChangeFilter={setFilter}
         onReorderTasks={reorderTasks}
         modalType={setModalType}
         isDeletingAll={isDeletingAll}
