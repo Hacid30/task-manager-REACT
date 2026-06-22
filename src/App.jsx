@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { useTasks } from "./hooks/useTasks";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import DarkModeBtn from "./components/DarkModeBtn";
@@ -9,11 +10,21 @@ import "./App.css";
 
 function App() {
   // -- states --
-  const [ tasks, setTasks ] = useState(() => {
-    const savedTasks = localStorage.getItem('my_tasks');
-    return savedTasks ? JSON.parse(savedTasks) : [];
-  }); 
+  const { tasks, addTask, deleteTask, toggleTask, updateTask, deleteTasks, reorderTasks } = useTasks();
   
+  const handleAddTask = (text, priority) => {
+    addTask(text, priority);
+    setIsModalOpen(true);
+    setModalType('success');
+  };
+
+  const handleDeleteAll = () => {
+    deleteTasks();
+    setTimeout(() => {
+      setIsDeletingAll(false);
+    }, 400);
+  };
+
   const [ filters, setFilters ] = useState({
     status: 'all',
     search: '',
@@ -36,13 +47,7 @@ function App() {
 
   const formRef = useRef(null);
 
-  //Use localstorage to save tasks in the browser
-  useEffect(() =>{
-    localStorage.setItem('my_tasks', JSON.stringify(tasks));
-  },[tasks]);
-
   //Filter
-
   const tasksToRender = useMemo(() => {
     let filtered = [...tasks];
     
@@ -74,14 +79,6 @@ function App() {
     setIsDarkMode(!isDarkMode);
   }
 
-  const updateTask = (id, newText, newPriority) => {
-    const updatedTasks = tasks.map((task) => 
-      task.id === id ? {...task, text: newText, priority: newPriority } : task
-    );
-
-    setTasks(updatedTasks);
-  }
-
   useEffect(() => {
     if(isDarkMode){
       document.body.classList.add("dark");
@@ -98,56 +95,6 @@ function App() {
     }
   },[]);
 
-  //Add tasks
-  const addTask = (text, priority) => {
-    if(text.trim() === '') return;
-    
-    const newTask = {
-      id : Date.now(),
-      text : text,
-      priority: priority,
-      date : Date.now(),
-      completed: false
-    };
-    setTasks([...tasks, newTask]);
-
-    setIsModalOpen(true);
-    setModalType('success');
-  };
-
-  const deleteTask = (id) => {
-    setTasks(prevTask =>
-      prevTask.map(task =>
-        task.id === id ? {...task, isDeleting: true } : task
-      )
-    );
-
-    setTimeout(() =>{
-      setTasks(prevTask => prevTask.filter( (task) => task.id !== id ));
-    }, 400);
-  };
-
-  const toggleTask = (id) => {
-    const updateTasks = tasks.map( (task) =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    );
-
-    setTasks(updateTasks);
-  };
-
-  const reorderTasks = (draggedId, targetId) => {
-    const draggedIndex = tasks.findIndex(task => task.id === draggedId);
-    const targetIndex = tasks.findIndex(task => task.id === targetId);
-
-    if(draggedIndex === -1 || targetIndex === -1) return;
-
-    const newTasks = [...tasks];
-    const [draggedTask] = newTasks.splice(draggedIndex, 1);
-    newTasks.splice(targetIndex, 0, draggedTask);
-
-    setTasks(newTasks);
-  };
-
   // boton de scroll
   const scrollToForm = () => {
     if(formRef.current) {
@@ -155,19 +102,13 @@ function App() {
     }
   }
 
-  const deleteTasks = () => {
-    setTimeout( () => {
-      setTasks([]);
-      setIsDeletingAll(false)
-    }, 400 )
-  }
-
+  // Function handler
   const taskActions = {
     delete: deleteTask,
     toggle: toggleTask,
     reorder: reorderTasks,
     update: updateTask,
-    deleteAll: deleteTasks
+    deleteAll: handleDeleteAll
   }
 
   return (
@@ -179,7 +120,7 @@ function App() {
         isDarkMode={isDarkMode}
       />
       <div ref={formRef}>
-      <TaskForm onAddTask={addTask} />
+      <TaskForm onAddTask={handleAddTask} />
       </div>
 
       <Browse
