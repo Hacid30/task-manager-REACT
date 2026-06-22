@@ -2,10 +2,75 @@ import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
+function TaskList({
+    tasks, 
+    allTasksCount,
+    filters,
+    taskActions,
+    onOpenEdit, 
+    modalType,
+    setIsModalOpen,
+    isDeletingAll
+    }){
+
+    if(allTasksCount.length === 0){
+        return <p className="no-tasks-message">No tienes tareas registradas</p>;
+    }
+
+    if(tasks.length === 0){
+        if(filters.status === 'pending'){
+            return <p className="no-tasks-message">No tienes tareas pendientes.</p>
+        }
+        if(filters.status === 'completed'){
+            return <p className="no-tasks-message">No tienes tareas realizadas.</p>
+        }
+
+        return <p className="no-tasks-message">No se encontraron tareas que coincidan con la búsqueda.</p>
+    }
+
+    const handleDragStart = (e, id) => {
+        e.dataTransfer.setData('text/plain', id);
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e, targetId) => {
+        e.preventDefault();
+        const draggedId = Number(e.dataTransfer.getData('text/plain'));
+        if(draggedId !== targetId){
+            taskActions.reorder(draggedId, targetId);
+        }
+    };
+
+    return(
+        <div>
+            <ul className={`${isDeletingAll ? 'eliminating' : ''} list`}>                
+                {tasks.map((task) => (
+                    <TaskItem
+                    key={task.id}
+                    task={task}
+                    taskActions={taskActions}
+                    onOpenEdit={onOpenEdit}
+                    handleDragStart={handleDragStart}
+                    handleDragOver={handleDragOver}
+                    handleDrop={handleDrop}
+                    isDeletingAll={isDeletingAll}
+                    modalType={modalType}
+                    setIsModalOpen={setIsModalOpen}
+                    />
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+export default TaskList;
+
 function TaskItem({ 
     task, 
-    onDeleteTask, 
-    onToggleTask, 
+    taskActions,
     onOpenEdit, 
     handleDragStart, 
     handleDragOver, 
@@ -63,7 +128,7 @@ function TaskItem({
             <div className="listButtons">
                 <button 
                     className={`${task.completed ? 'accomplished-btn' : 'none'} carriedOut`}
-                    onClick={() => onToggleTask(task.id)} 
+                    onClick={() => taskActions.toggle(task.id)} 
                 > &#10004; </button>
 
                 <button 
@@ -72,7 +137,8 @@ function TaskItem({
                 > Editar </button>
 
                 <button 
-                    onClick={() => {onDeleteTask(task.id);
+                    onClick={() => {
+                        taskActions.delete(task.id);
                         modalType('eliminated');
                         setIsModalOpen(true)
                     }}
@@ -82,73 +148,3 @@ function TaskItem({
         </li>
     );
 }
-
-
-function TaskList({
-    tasks, 
-    allTasksCount,
-    onDeleteTask,
-    onToggleTask, 
-    onOpenEdit,  
-    onReorderTasks,
-    modalType,
-    setIsModalOpen,
-    isDeletingAll,
-    filters
-    }){
-
-    if(allTasksCount.length === 0){
-        return <p className="no-tasks-message">No tienes tareas registradas</p>;
-    }
-
-    if(tasks.length === 0){
-        if(filters.status === 'pending'){
-            return <p className="no-tasks-message">No tienes tareas pendientes.</p>
-        }
-        if(filters.status === 'completed'){
-            return <p className="no-tasks-message">No tienes tareas realizadas.</p>
-        }
-
-        return <p className="no-tasks-message">No se encontraron tareas que coincidan con la búsqueda.</p>
-    }
-
-    const handleDragStart = (e, id) => {
-        e.dataTransfer.setData('text/plain', id);
-    };
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-    };
-
-    const handleDrop = (e, targetId) => {
-        e.preventDefault();
-        const draggedId = Number(e.dataTransfer.getData('text/plain'));
-        if(draggedId !== targetId){
-            onReorderTasks(draggedId, targetId);
-        }
-    };
-
-    return(
-        <div>
-            <ul className={`${isDeletingAll ? 'eliminating' : ''} list`}>                
-                {tasks.map((task) => (
-                    <TaskItem
-                    key={task.id}
-                    task={task}
-                    onDeleteTask={onDeleteTask}
-                    onToggleTask={onToggleTask}
-                    onOpenEdit={onOpenEdit}
-                    handleDragStart={handleDragStart}
-                    handleDragOver={handleDragOver}
-                    handleDrop={handleDrop}
-                    isDeletingAll={isDeletingAll}
-                    modalType={modalType}
-                    setIsModalOpen={setIsModalOpen}
-                    />
-                ))}
-            </ul>
-        </div>
-    );
-}
-
-export default TaskList;

@@ -2,9 +2,9 @@ import "../App.css";
 
 function Browse({
     tasks,
-    onDeleteTasks,
     filters,
     onFilterChange,
+    taskActions,
     setIsModalOpen,
     modalType,
     isDeletingAll
@@ -39,10 +39,10 @@ function Browse({
             {tasks >= 2 &&(
                 <button 
                 onClick={ () => {
-                    onDeleteTasks(),
-                    setIsModalOpen(true),
-                    modalType('deleteAll'),
-                    isDeletingAll(true)
+                    taskActions.deleteAll();
+                    setIsModalOpen(true);
+                    modalType('deleteAll');
+                    isDeletingAll(true);
                 }}
                 className= 'eliminate btnDeleteAll'
                 > Eliminar todo </button>)

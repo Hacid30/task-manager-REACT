@@ -162,6 +162,14 @@ function App() {
     }, 400 )
   }
 
+  const taskActions = {
+    delete: deleteTask,
+    toggle: toggleTask,
+    reorder: reorderTasks,
+    update: updateTask,
+    deleteAll: deleteTasks
+  }
+
   return (
     <div>
       <h1>ADMINISTRADOR DE TAREAS</h1>
@@ -176,9 +184,9 @@ function App() {
 
       <Browse
         tasks={tasks.length} 
-        onDeleteTasks={deleteTasks}
         filters={filters}
         onFilterChange={handleFilterChange}
+        taskActions={taskActions}
         setIsModalOpen={setIsModalOpen}
         modalType={setModalType}
         isDeletingAll={setIsDeletingAll}
@@ -188,14 +196,13 @@ function App() {
         tasks={tasksToRender} 
         allTasksCount={tasks}
         filters={filters}
-        onDeleteTask={deleteTask} 
-        onToggleTask={toggleTask} 
-        onOpenEdit={(task) => { setTaskToEdit(task); 
+        taskActions={taskActions}
+        onOpenEdit={(task) => { 
+          setTaskToEdit(task); 
           setIsModalOpen(true);
           setModalType('editing');
         }} 
         setIsModalOpen={setIsModalOpen}
-        onReorderTasks={reorderTasks}
         modalType={setModalType}
         isDeletingAll={isDeletingAll}
       />
