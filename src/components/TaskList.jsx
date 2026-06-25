@@ -130,6 +130,7 @@ const TaskItem = React.memo(({
                 <button 
                     className={`${task.completed ? 'accomplished-btn' : 'none'} carriedOut`}
                     onClick={() => taskActions.toggle(task.id)} 
+                    aria-label={task.completed ? `Marcar tarea "${task.text}" como pendiente` : `Marcar tarea "${task.text}" como completada`}
                 > &#10004; </button>
 
                 <button 
