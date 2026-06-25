@@ -40,7 +40,7 @@ This project was developed to practice React fundamentals, business logic, and c
     ├── /components
         ├── Browse.jsx
         ├── DarkModeBtn.jsx
-        ├── Manners.jsx
+        ├── TaskModal.jsx
         ├── Summary.jsx
         ├── TaskForm.jsx
         ├──TaskList.jsx

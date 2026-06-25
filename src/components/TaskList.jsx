@@ -1,6 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+
+const handleDragStart = (e, id) => {
+    e.dataTransfer.setData('text/plain', id);
+};
+
+const handleDragOver = (e) => {
+    e.preventDefault();
+};
+
 
 function TaskList({
     tasks, 
@@ -27,14 +36,6 @@ function TaskList({
 
         return <p className="no-tasks-message">No se encontraron tareas que coincidan con la búsqueda.</p>
     }
-
-    const handleDragStart = (e, id) => {
-        e.dataTransfer.setData('text/plain', id);
-    };
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-    };
 
     const handleDrop = (e, targetId) => {
         e.preventDefault();
@@ -68,7 +69,7 @@ function TaskList({
 
 export default TaskList;
 
-function TaskItem({ 
+const TaskItem = React.memo(({ 
     task, 
     taskActions,
     onOpenEdit, 
@@ -78,7 +79,7 @@ function TaskItem({
     isDeletingAll, 
     modalType, 
     setIsModalOpen 
-}){
+}) => {
     const [minuteTick, setMinuteTick] = useState(0);
 
     useEffect( () => {
@@ -147,4 +148,6 @@ function TaskItem({
             </div>
         </li>
     );
-}
+});
+
+TaskItem.displayName = "TaskItem";

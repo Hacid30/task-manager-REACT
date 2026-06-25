@@ -9,9 +9,24 @@ import Browse from "./components/Browse";
 import "./App.css";
 
 function App() {
-  // -- states --
+  // -- States and Hooks --
   const { tasks, addTask, deleteTask, toggleTask, updateTask, deleteTasks, reorderTasks } = useTasks();
+
+  const [ filters, setFilters ] = useState({
+    status: 'all',
+    search: '',
+    dateSort: '',
+    priority: ''
+  });
+
+  const [ isDarkMode, setIsDarkMode ] = useState(false);
+  const [ taskToEdit, setTaskToEdit ] = useState(null);
+  const [ isModalOpen, setIsModalOpen ] = useState(false);
+  const [ modalType, setModalType ] = useState('');
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
+  const formRef = useRef(null);
   
+  // ==== Handlers and Logic ====
   const handleAddTask = (text, priority) => {
     addTask(text, priority);
     setIsModalOpen(true);
@@ -25,13 +40,6 @@ function App() {
     }, 400);
   };
 
-  const [ filters, setFilters ] = useState({
-    status: 'all',
-    search: '',
-    dateSort: '',
-    priority: ''
-  });
-
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
       ...prev,
@@ -39,13 +47,25 @@ function App() {
     }));
   }
 
-  const [ isDarkMode, setIsDarkMode ] = useState(false);
-  const [ taskToEdit, setTaskToEdit ] = useState(null);
-  const [ isModalOpen, setIsModalOpen ] = useState(false);
-  const [ modalType, setModalType ] = useState('');
-  const [isDeletingAll, setIsDeletingAll] = useState(false);
+  const togglesDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  }
 
-  const formRef = useRef(null);
+  // Scroll button
+  const scrollToForm = () => {
+    if(formRef.current) {
+      formRef.current.scrollIntoView( { behavior: 'smooth'} );
+    }
+  }
+
+  // Function handler
+  const taskActions = {
+    delete: deleteTask,
+    toggle: toggleTask,
+    reorder: reorderTasks,
+    update: updateTask,
+    deleteAll: handleDeleteAll
+  }
 
   //Filter
   const tasksToRender = useMemo(() => {
@@ -75,10 +95,7 @@ function App() {
     return filtered;
   }, [tasks, filters]);
 
-  const togglesDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  }
-
+  // === Effects ===
   useEffect(() => {
     if(isDarkMode){
       document.body.classList.add("dark");
@@ -94,22 +111,6 @@ function App() {
       setIsDarkMode(true);
     }
   },[]);
-
-  // boton de scroll
-  const scrollToForm = () => {
-    if(formRef.current) {
-      formRef.current.scrollIntoView( { behavior: 'smooth'} );
-    }
-  }
-
-  // Function handler
-  const taskActions = {
-    delete: deleteTask,
-    toggle: toggleTask,
-    reorder: reorderTasks,
-    update: updateTask,
-    deleteAll: handleDeleteAll
-  }
 
   return (
     <div>
