@@ -136,6 +136,7 @@ const TaskItem = React.memo(({
                 <button 
                     onClick={() => onOpenEdit(task)}
                     className="edit"
+                    aria-label={`Editar tarea: ${task.text}`}
                 > Editar </button>
 
                 <button 
@@ -145,6 +146,7 @@ const TaskItem = React.memo(({
                         setIsModalOpen(true)
                     }}
                     className="eliminate" 
+                    aria-label={`Eliminar tarea: ${task.text}`}
                 > Eliminar </button> 
             </div>
         </li>

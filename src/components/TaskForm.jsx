@@ -20,8 +20,9 @@ function TaskForm({ onAddTask }) {
 
     return(
     <form onSubmit={handSubmit}>
-        <label>Título: </label>
+        <label htmlFor="task-title" >Título: </label>
         <input 
+            id="task-title"
             type="text"
             placeholder="Escribe una tarea..."
             value={inputValue}
@@ -31,8 +32,11 @@ function TaskForm({ onAddTask }) {
 
         {hasError && <p className="error" >¡Ey! No puedes dejar el título vacío</p>}
 
-        <label>Prioridad: </label>
-        <select value={priority}  onChange={(e) => setPriority(e.target.value)}>
+        <label htmlFor="task-priority">Prioridad: </label>
+        <select 
+            id="task-priority"
+            value={priority}  onChange={(e) => setPriority(e.target.value)}
+        >
             <option value="alta">Alta</option>
             <option value="media">Media</option>
             <option value="baja">Baja</option>

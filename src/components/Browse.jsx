@@ -17,7 +17,7 @@ function Browse({
             }
             
             {tasks >= 2 &&(
-                <input 
+                <input
                 type="text" 
                 placeholder="Buscar tarea por título o descripción"
                 style={{width: '100%'}}
@@ -53,16 +53,22 @@ function Browse({
                     <p className="showParagraph" >Ordenar tareas por...</p>
                     <div className="order">
                         <div>
-                            <label> Fecha: </label>
-                            <select value={filters.dateSort}  onChange={(e) => onFilterChange( 'dateSort', e.target.value)} >
+                            <label htmlFor="date-filter" > Fecha: </label>
+                            <select 
+                                id="date-filter"
+                                value={filters.dateSort}  onChange={(e) => onFilterChange( 'dateSort', e.target.value)} 
+                            >
                                 <option value="">Ninguna</option>
                                 <option value="recent">Más reciente</option>
                                 <option value="oldest">Más antigua</option>
                             </select>
                         </div>
                         <div>
-                            <label> Prioridad: </label>
-                            <select value={filters.priority}  onChange={(e) => onFilterChange('priority', e.target.value)}>
+                            <label htmlFor="priority-filter"> Prioridad: </label>
+                            <select 
+                                id="priority-filter"
+                                value={filters.priority}  onChange={(e) => onFilterChange('priority', e.target.value)}
+                            >
                                 <option value="">Ninguna</option>
                                 <option value="high">Alta</option>
                                 <option value="medium">Media</option>
