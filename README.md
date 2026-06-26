@@ -27,9 +27,11 @@ This project was developed to practice React fundamentals, business logic, and c
 
 ## Technologies used
 
-- [HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
-- [CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
-- [REACT]
+- ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+- ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+- ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+- ![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+- ![Vitest](https://img.shields.io/badge/vitest-%23646CFF.svg?style=for-the-badge&logo=vitest&logoColor=white)
 
 ## Project structure
 
@@ -37,6 +39,9 @@ This project was developed to practice React fundamentals, business logic, and c
 ├── /src
     ├── App.jsx
     ├── App.css
+    ├── /assets
+        ├── /img
+        ├── react.svg 
     ├── /components
         ├── Browse.jsx
         ├── DarkModeBtn.jsx
@@ -44,13 +49,17 @@ This project was developed to practice React fundamentals, business logic, and c
         ├── Summary.jsx
         ├── TaskForm.jsx
         ├──TaskList.jsx
-    ├── /assets
-        ├── /img
-        ├── react.svg 
+    ├── /hooks
+        ├── useTasks.js
+        ├── useTasks.test.js
 
 ## Applied concepts
 
 - React Hooks (useState, useEffect, useRef, useMemo).
+- Custom Hooks for business logic separation (`useTasks`).
+- Performance Optimization preventing unnecessary re-renders (`React.memo`).
+- Web Accessibility (a11y) using `aria-label` for screen readers.
+- Unit Testing configured with Vitest and React Testing Library.
 - Prop drilling and component communication.
 - Conditional rendering.
 - Data persistence using the browser's localStorage.
@@ -69,6 +78,17 @@ This project was developed to practice React fundamentals, business logic, and c
 10. Use the "Date" or "Priority" dropdowns to sort and filter your view.
 11. Drag any task and drop it in a new position to reorder your list.
 12. Use the "Inicio" (Home) button in the summary to jump back to the form.
+
+## Screenshots
+
+### Main Interface & Light Mode
+<p align="center">
+  <img src="./src/assets/img/Captura de pantalla 2026-06-25 220052.png" alt="Main Interface Light Mode" height="400px" width="45%"/>
+  <img src="./src/assets/img/Captura de pantalla 2026-06-25 220128.png" alt="Main Interface Dark Mode" height="400px" width="45%"/>
+</p>
+
+### Drag & Drop Reordering
+<img src="./src/assets/img/Grabación 2026-06-25 220231.gif" alt="Drag and Drop Feature" height="600px" width="50%"/> 
 
 ## Author
 **Héctor Hacid Julio Meza**  
