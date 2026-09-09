@@ -1,5 +1,25 @@
 import "../App.css";
 
+export interface Filters {
+    status: 'all' | 'pending' | 'completed';
+    dateSort: "" | "recent" | "oldest";
+    priority: "" | "high" | "medium" | "low";
+}
+
+export interface TaskActions {
+    deleteAll: () => void;
+}
+
+interface BrowseProps {
+    tasks: number;
+    filters: Filters;
+    onFilterChange: (key: string, value: string) => void;
+    taskActions: TaskActions;
+    setIsModalOpen: (isOpen: boolean) => void;
+    modalType: (type: string) => void;
+    isDeletingAll: (isDeleting: boolean) => void;
+}
+
 function Browse({
     tasks,
     filters,
@@ -8,7 +28,7 @@ function Browse({
     setIsModalOpen,
     modalType,
     isDeletingAll
-    }){
+    } :BrowseProps){
 
     return(
         <div>

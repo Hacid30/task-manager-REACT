@@ -1,6 +1,13 @@
-import "../App.css"
+import { Task } from "../types";
+import "../App.css";
 
-function Summary({tasks, onTasksGlobal, onScroll}){
+interface SummaryProps {
+    tasks: Task[];
+    onTasksGlobal: Task[];
+    onScroll: () => void
+}
+
+function Summary({tasks, onTasksGlobal, onScroll} : SummaryProps){
     const totalTasks = tasks.length;
     const pendingTasks = tasks.filter(task => task.completed === false).length;
     const completedTasks = tasks.filter(task => task.completed === true).length;

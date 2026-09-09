@@ -1,5 +1,9 @@
+interface DarkModeBtnProps {
+    OnTogglesDark: () => void;
+    isDarkMode: boolean
+}
 
-function DarkModeBtn({OnTogglesDark, isDarkMode}){
+function DarkModeBtn({OnTogglesDark, isDarkMode} : DarkModeBtnProps){
     
     return(
         <div className="darklightMode">
