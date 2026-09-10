@@ -1,12 +1,39 @@
+import { Task } from "../types";
 import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
-const handleDragStart = (e, id) => {
-    e.dataTransfer.setData('text/plain', id);
+export interface TaskActions {
+    delete: (id: number) => void;
+    toggle: (id: number) => void;
+    reorder: (draggedId: number, targetId: number) => void;
+    update: (id: number, text: string, priority: string) => void;
+    deleteAll: () => void;
+}
+
+export interface FilterStatus {
+    status: 'all' | 'pending' | 'completed';
+    search: string;
+    dateSort: string;
+    priority: string;
+}
+
+interface TaskListProps {
+    tasks: Task[];
+    allTasksCount: Task[];
+    filters: FilterStatus;
+    taskActions: TaskActions;
+    onOpenEdit: (task: Task) => void;
+    modalType: (type: string) => void;
+    setIsModalOpen: (isOpen: boolean) => void;
+    isDeletingAll: boolean;
+}
+
+const handleDragStart = (e: React.DragEvent, id: number) => {
+    e.dataTransfer.setData('text/plain', id.toString());
 };
 
-const handleDragOver = (e) => {
+const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
 };
 
@@ -20,7 +47,7 @@ function TaskList({
     modalType,
     setIsModalOpen,
     isDeletingAll
-    }){
+    } : TaskListProps){
 
     if(allTasksCount.length === 0){
         return <p className="no-tasks-message">No tienes tareas registradas</p>;
@@ -37,7 +64,7 @@ function TaskList({
         return <p className="no-tasks-message">No se encontraron tareas que coincidan con la búsqueda.</p>
     }
 
-    const handleDrop = (e, targetId) => {
+    const handleDrop = (e: React.DragEvent, targetId: number) => {
         e.preventDefault();
         const draggedId = Number(e.dataTransfer.getData('text/plain'));
         if(draggedId !== targetId){
@@ -69,6 +96,18 @@ function TaskList({
 
 export default TaskList;
 
+interface TaskItemProps {
+    task: Task;
+    taskActions: TaskActions;
+    onOpenEdit: (task: Task) => void;
+    handleDragStart: (e: React.DragEvent, id: number) => void;
+    handleDragOver:  (e: React.DragEvent) => void;
+    handleDrop: (e: React.DragEvent, id: number) => void;
+    modalType: (type: string) => void;
+    setIsModalOpen: (isOpen: boolean) => void;
+    isDeletingAll: boolean;
+}
+
 const TaskItem = React.memo(({ 
     task, 
     taskActions,
@@ -79,7 +118,7 @@ const TaskItem = React.memo(({
     isDeletingAll, 
     modalType, 
     setIsModalOpen 
-}) => {
+}: TaskItemProps) => {
     const [minuteTick, setMinuteTick] = useState(0);
 
     useEffect( () => {
