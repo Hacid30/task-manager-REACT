@@ -1,8 +1,19 @@
-import { useState, useEffect } from "react";
+import { Task } from "../types";
+import React, { useState, useEffect } from "react";
 import "../App.css"
 import checkImg from '../assets/img/marca-verifica.avif'
 
-function TaskModal({task, onUpdateTask, onClose, modalType, sendModalType}){
+export type ModalType = 'success' | 'edited' | 'eliminated' | 'deleteAll' | 'editing' | '';
+
+interface TaskModalProps {
+    task: Task;
+    onUpdateTask: (id: number | string, text: string, priority: string) => void;
+    onClose: () => void;
+    modalType: ModalType;
+    sendModalType: (type: ModalType) => void;
+} 
+
+function TaskModal({task, onUpdateTask, onClose, modalType, sendModalType}:TaskModalProps){
     const [editText, setEditText] = useState(task ? task.text : '');
     const [priority, setPriority] = useState(task ? task.priority : 'media');
 
@@ -13,18 +24,17 @@ function TaskModal({task, onUpdateTask, onClose, modalType, sendModalType}){
         }
     }, [task]);
 
-    const handSubmit = (e) => {
+    const handSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onUpdateTask(task.id, editText, priority);
         sendModalType('edited');
     }
 
     useEffect( () => {
-        let timer;
         if(modalType === 'edited' || modalType === 'success' 
             || modalType === 'eliminated' || modalType === 'deleteAll'
         ){
-            timer = setTimeout(() =>{
+            const timer = setTimeout(() =>{
                 onClose()
             }, 2000)
 
