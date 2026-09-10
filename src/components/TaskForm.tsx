@@ -1,11 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-function TaskForm({ onAddTask }) {
+interface TaskFormProps {
+    onAddTask: (inputValue: string, priority: string) => void;
+}
+
+function TaskForm({ onAddTask }: TaskFormProps) {
     const [ inputValue, setInputValue ] = useState('');
     const [ priority, setPriority ] = useState('media');
     const [ hasError, setHasError] = useState(false);
 
-    const handSubmit = (e) => {
+    const handSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if(inputValue.trim() === '') {
             setHasError(true);
