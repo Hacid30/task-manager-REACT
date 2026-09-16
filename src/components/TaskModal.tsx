@@ -6,8 +6,8 @@ import checkImg from '../assets/img/marca-verifica.avif'
 export type ModalType = 'success' | 'edited' | 'eliminated' | 'deleteAll' | 'editing' | '';
 
 interface TaskModalProps {
-    task: Task;
-    onUpdateTask: (id: number | string, text: string, priority: string) => void;
+    task: Task | null;
+    onUpdateTask: (id: number, text: string, priority: Task['priority']) => void;
     onClose: () => void;
     modalType: ModalType;
     sendModalType: (type: ModalType) => void;
@@ -15,17 +15,18 @@ interface TaskModalProps {
 
 function TaskModal({task, onUpdateTask, onClose, modalType, sendModalType}:TaskModalProps){
     const [editText, setEditText] = useState(task ? task.text : '');
-    const [priority, setPriority] = useState(task ? task.priority : 'media');
+    const [priority, setPriority] = useState<Task['priority']>(task ? task.priority : 'medium');
 
     useEffect(() => {
         if (task) {
             setEditText(task.text);
-            setPriority(task.priority || 'media');
+            setPriority(task.priority || 'medium');
         }
     }, [task]);
 
     const handSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if(task === null) return;
         onUpdateTask(task.id, editText, priority);
         sendModalType('edited');
     }
@@ -55,10 +56,10 @@ function TaskModal({task, onUpdateTask, onClose, modalType, sendModalType}:TaskM
                 />
 
                 <label>Prioridad: </label>
-                <select  value={priority} onChange={(e) => setPriority(e.target.value)}>
-                    <option value="alta">Alta</option>
-                    <option value="media">Media</option>
-                    <option value="baja">Baja</option>
+                <select  value={priority} onChange={(e) => setPriority(e.target.value as Task['priority'])}>
+                    <option value="high">Alta</option>
+                    <option value="medium">Media</option>
+                    <option value="low">Baja</option>
                 </select>
 
                 <button className="guardarTarea aprobado" title="Botón para guardar tarea" type="submit" >Guardar</button>

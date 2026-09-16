@@ -1,7 +1,9 @@
+import { ModalType } from "./TaskModal";
 import "../App.css";
 
 export interface Filters {
     status: 'all' | 'pending' | 'completed';
+    search: string;
     dateSort: "" | "recent" | "oldest";
     priority: "" | "high" | "medium" | "low";
 }
@@ -13,10 +15,10 @@ export interface TaskActions {
 interface BrowseProps {
     tasks: number;
     filters: Filters;
-    onFilterChange: (key: string, value: string) => void;
+    onFilterChange: (key: keyof Filters, value: string) => void;
     taskActions: TaskActions;
     setIsModalOpen: (isOpen: boolean) => void;
-    modalType: (type: string) => void;
+    modalType: (type: ModalType) => void;
     isDeletingAll: (isDeleting: boolean) => void;
 }
 

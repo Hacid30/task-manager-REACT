@@ -1,3 +1,6 @@
+import { Task } from "./types";
+import { Filters } from "./components/Browse";
+import { ModalType } from "./components/TaskModal";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useTasks } from "./hooks/useTasks";
 import TaskForm from "./components/TaskForm";
@@ -12,7 +15,7 @@ function App() {
   // -- States and Hooks --
   const { tasks, addTask, deleteTask, toggleTask, updateTask, deleteTasks, reorderTasks } = useTasks();
 
-  const [ filters, setFilters ] = useState({
+  const [ filters, setFilters ] = useState <Filters>({
     status: 'all',
     search: '',
     dateSort: '',
@@ -20,14 +23,14 @@ function App() {
   });
 
   const [ isDarkMode, setIsDarkMode ] = useState(false);
-  const [ taskToEdit, setTaskToEdit ] = useState(null);
+  const [ taskToEdit, setTaskToEdit ] = useState <Task | null>(null);
   const [ isModalOpen, setIsModalOpen ] = useState(false);
-  const [ modalType, setModalType ] = useState('');
+  const [ modalType, setModalType ] = useState<ModalType>('');
   const [isDeletingAll, setIsDeletingAll] = useState(false);
-  const formRef = useRef(null);
+  const formRef = useRef <HTMLDivElement | null > (null);
   
   // ==== Handlers and Logic ====
-  const handleAddTask = (text, priority) => {
+  const handleAddTask = (text: string, priority: Task['priority']) => {
     addTask(text, priority);
     setIsModalOpen(true);
     setModalType('success');
@@ -40,7 +43,7 @@ function App() {
     }, 400);
   };
 
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (key: keyof typeof filters, value: string) => {
     setFilters(prev => ({
       ...prev,
       [key]: value
@@ -139,7 +142,7 @@ function App() {
         allTasksCount={tasks}
         filters={filters}
         taskActions={taskActions}
-        onOpenEdit={(task) => { 
+        onOpenEdit={(task: Task) => { 
           setTaskToEdit(task); 
           setIsModalOpen(true);
           setModalType('editing');

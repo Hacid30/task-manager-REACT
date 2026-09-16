@@ -1,4 +1,5 @@
 import { Task } from "../types";
+import { ModalType } from "./TaskModal";
 import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -7,7 +8,7 @@ export interface TaskActions {
     delete: (id: number) => void;
     toggle: (id: number) => void;
     reorder: (draggedId: number, targetId: number) => void;
-    update: (id: number, text: string, priority: string) => void;
+    update: (id: number, text: string, priority: Task['priority']) => void;
     deleteAll: () => void;
 }
 
@@ -24,7 +25,7 @@ interface TaskListProps {
     filters: FilterStatus;
     taskActions: TaskActions;
     onOpenEdit: (task: Task) => void;
-    modalType: (type: string) => void;
+    modalType: (type: ModalType) => void;
     setIsModalOpen: (isOpen: boolean) => void;
     isDeletingAll: boolean;
 }
@@ -103,9 +104,15 @@ interface TaskItemProps {
     handleDragStart: (e: React.DragEvent, id: number) => void;
     handleDragOver:  (e: React.DragEvent) => void;
     handleDrop: (e: React.DragEvent, id: number) => void;
-    modalType: (type: string) => void;
+    modalType: (type: ModalType) => void;
     setIsModalOpen: (isOpen: boolean) => void;
     isDeletingAll: boolean;
+}
+
+const priorityLabels: Record<Task['priority'], string> = {
+    high: 'Alta',
+    medium: 'Media',
+    low: 'Baja'
 }
 
 const TaskItem = React.memo(({ 
@@ -162,7 +169,7 @@ const TaskItem = React.memo(({
                 style={{ cursor: 'move' }}
         > 
             <span className={task.completed ? 'made' : 'none'}>
-                {`${task.text} | ${timeAgo} | ${task.priority}`}
+                {`${task.text} | ${timeAgo} | ${priorityLabels[task.priority]}`}
             </span>
 
             <div className="listButtons">

@@ -1,12 +1,13 @@
+import { Task } from "../types";
 import React, { useState } from "react";
 
 interface TaskFormProps {
-    onAddTask: (inputValue: string, priority: string) => void;
+    onAddTask: (inputValue: string, priority: Task['priority']) => void;
 }
 
 function TaskForm({ onAddTask }: TaskFormProps) {
     const [ inputValue, setInputValue ] = useState('');
-    const [ priority, setPriority ] = useState('media');
+    const [ priority, setPriority ] = useState < Task['priority']>('medium');
     const [ hasError, setHasError] = useState(false);
 
     const handSubmit = (e: React.FormEvent) => {
@@ -18,7 +19,7 @@ function TaskForm({ onAddTask }: TaskFormProps) {
 
         onAddTask(inputValue, priority);
         setInputValue('');
-        setPriority('media');
+        setPriority('medium');
         setHasError(false);
     }
 
@@ -39,13 +40,13 @@ function TaskForm({ onAddTask }: TaskFormProps) {
         <label htmlFor="task-priority">Prioridad: </label>
         <select 
             id="task-priority"
-            value={priority}  onChange={(e) => setPriority(e.target.value)}
+            value={priority}  onChange={(e) => setPriority(e.target.value as Task['priority'])}
         >
-            <option value="alta">Alta</option>
-            <option value="media">Media</option>
-            <option value="baja">Baja</option>
+            <option value='high'>Alta</option>
+            <option value='medium'>Media</option>
+            <option value='low'>Baja</option>
         </select>
-        
+
         <button type="submit" className="approved">Agregar</button>
     </form>
     )
